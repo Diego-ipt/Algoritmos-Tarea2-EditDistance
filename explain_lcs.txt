@@ -1,0 +1,46 @@
+ 5.6.2 DP: Common Subsequence
+ A string q is a subsequence of a string s if q can be formed by dropping characters from s. For example, abc
+ is a subsequence of faaaeoebhuac.
+ Many different strings can share a subsequence, e.g., abc is a subsequence of both fabec and alphabetic.
+ Problem 5. Given strings s and t, find the longest string q such that q is a subsequence of both s and t
+ (this is called the longest common subsequence, or LCS).
+ A Recursive Solution
+ (Think on your own/TPS for a while.)
+ We make the following claims (saying ‘the’ LCS but there may be multiple):
+ 1. If both s and t start with the same character, i.e., s1 = t1, then the LCS starts with s1 followed by the
+ LCS between s2... and t2....
+ 2. Otherwise, the LCS is either the LCS of s2... and t, or the LCS of s and t2....
+ Both of these are nonobvious enough that you should really prove them. Here’s a proof for the first claim;
+ I suggest trying to prove the second as practice (it’s in CLRS if you get stuck!).
+ Proof. Suppose s1 = t1 and q is an LCS of both s and t. If q1 = s1, then we’re done. Otherwise, q consists
+ entirely of a subsequence between s2... and t2...; but then s1 ◦ q is a subsequence between s and t of strictly
+ larger length, so we have a contradiction and hence this case cannot happen.
+ (Insert example here, something like: s =′ axbxc′, t =′ ayybyycy′. They claim there’s an LCS shared
+ between s and t that does not start with s1 =′ a′, e.g., bc. But then you could prepend s1 =′ a′ onto this to
+ get abc which is a subsequence, longer than the so-called LCS!)
+ This observation leads to the following recursive program:
+5.6. MORE CLASSIC ALGORITHMS
+ def lcs(s, t):
+ if s == "" or t == "": return ""
+ if s[0] == t[0]: return s[0] + lcs(s[1:], t[1:])
+ a = lcs(s[1:], t)
+ b = lcs(s, t[1:])
+ return longest of a, b
+ Runtime pre-memoization
+ Suppose both s and t start off size n.
+ (TPS about the runtime pre-memoization.)
+ At each step you (in the worst case) recurse on two problems, each one smaller. This leads (not exactly,
+ but close enough) to a binary tree having depth n, hence ≈ 2n time. Not great!
+ Runtime post-memoization
+ Now imagine we memoize the code:
+ @MEMOIZE
+ def lcs(s, t):
+ if s == "" or t == "": return ""
+ if s[0] == t[0]: return s[0] + lcs(s[1:], t[1:])
+ a = lcs(s[1:], t)
+ b = lcs(s, t[1:])
+ return longest of a, b
+ We always recurse on a smaller input, so let’s ask how many unique inputs are possible. Well, each input
+ is some suffix of s and suffix of t. There are only O(n) suffices of a string of length n, so there are only
+ O(n2) possible unique inputs. Each such unique call does O(1) work other than recursing, for a total of
+ O(n2) time. Much better!
