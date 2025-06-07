@@ -102,8 +102,6 @@ int main() {
         for (int j = 0; j < N; ++j) {
             matRec[i][j]   = editDistanceRecursive(cadenas[i], cadenas[j]);
             matMemo[i][j]  = editDistanceMemo(cadenas[i], cadenas[j]);
-            matDP[i][j]    = editDistanceDP(cadenas[i], cadenas[j]);
-            matDPOpt[i][j] = editDistanceDPOptimized(cadenas[i], cadenas[j]);
         }
     }
 
