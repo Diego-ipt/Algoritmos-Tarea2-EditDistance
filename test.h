@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 #include <cassert>
-#include "EditDDI.h"
+#include "EditD.h"
 
 using namespace std;
 
@@ -82,53 +82,4 @@ void printMatrix(const vector<vector<int>>& mat, const vector<string>& nombres) 
         cout << "\n";
     }
 }
-
-void RecursiveDistances(const vector<string>& cadenas) {
-    cout << "Probando distancias (recursivo)...\n";
-    const int N = cadenas.size();
-    vector<vector<int>> mat(N, vector<int>(N));
-
-    for (int i = 0; i < N; ++i)
-        for (int j = 0; j < N; ++j)
-            mat[i][j] = editDistanceRecursive(cadenas[i], cadenas[j]);
-
-    if (isSymmetric(mat)) {
-        cout << "La matriz de distancia recursiva es simétrica.\n";
-    } else {
-        cout << "¡Error! La matriz recursiva NO es simétrica.\n";
-    }
-
-    printMatrix(mat, cadenas);
-
-    for (int i = 0; i < N; ++i)
-        for (int j = 0; j < N; ++j) {
-            cout << "Caso: \"" << cadenas[i] << "\" vs \"" << cadenas[j] << "\"\n";
-            printJustification(cadenas[i], cadenas[j], mat[i][j]);
-        }
-}
-
-void MemoizedDistances(const vector<string>& cadenas) {
-    cout << "Probando distancias (memoización)...\n";
-    const int N = cadenas.size();
-    vector<vector<int>> mat(N, vector<int>(N));
-
-    for (int i = 0; i < N; ++i)
-        for (int j = 0; j < N; ++j)
-            mat[i][j] = editDistanceMemo(cadenas[i], cadenas[j]);
-
-    if (isSymmetric(mat)) {
-        cout << "La matriz de distancia memoizada es simétrica.\n";
-    } else {
-        cout << "¡Error! La matriz memoizada NO es simétrica.\n";
-    }
-
-    printMatrix(mat, cadenas);
-
-    for (int i = 0; i < N; ++i)
-        for (int j = 0; j < N; ++j) {
-            cout << "Caso: \"" << cadenas[i] << "\" vs \"" << cadenas[j] << "\"\n";
-            printJustification(cadenas[i], cadenas[j], mat[i][j]);
-        }
-}
-
 #endif // TEST_EDIT_DISTANCE_H
