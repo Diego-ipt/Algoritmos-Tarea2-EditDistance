@@ -1,5 +1,5 @@
-#ifndef EDIT_DDI_H
-#define EDIT_DDI_H
+#ifndef EDIT_D_H
+#define EDIT_D_H
 
 #include <string>
 #include <vector>
@@ -7,7 +7,6 @@
 #include "lcs.h"
 #include <iostream>
 using namespace std;
-
 // Calcula la distancia de edición usando recursividad pura (basada en lcs_recursive).
 inline int editDistanceRecursive(const string &s, const string &t) {
     int lcs = lcs_recursive_str(s, t, s.size(), t.size());
@@ -19,11 +18,11 @@ inline int editDistanceMemo(const string &s, const string &t) {
     int lcs = lcs_memo_str(s, t);
     return static_cast<int>(s.size() + t.size() - 2 * lcs);
 }
-
+//int levenshteinDist(string word1, string word2)
 int editDistanceDP(string word1, string word2) {
     int size1 = word1.size();
     int size2 = word2.size();
-    int verif[size1 + 1][size2 + 1]; // Matrix que se ocupa dependiendo de la palabra mas larga, tamaño O(m·n) para el espacio  
+    vector<vector<int>> verif(size1 + 1, vector<int>(size2 + 1)); // Matrix que se ocupa dependiendo de la palabra mas larga, tamaño O(m·n) para el espacio  
 
     // Si una de las cadenas está vacía, la distancia es la longitud de la otra.
     if (size1 == 0)
@@ -57,7 +56,7 @@ int editDistanceDP(string word1, string word2) {
     // Ultima posicion es la Levenshtein distance.
     return verif[size1][size2];
 }
-
+//int levenshteinDistance(string s, string t)
 int editDistanceDPOptimized(string s, string t) {
     int m = s.size();
     int n = t.size();
@@ -93,4 +92,4 @@ int editDistanceDPOptimized(string s, string t) {
     return v0[n];
 }
 
-#endif // EDIT_DDI_H
+#endif // EDIT_D_H

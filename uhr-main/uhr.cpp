@@ -22,8 +22,7 @@
 #include "utils.cpp"
 
  // Include to be tested files here
-//#include "levenshteinOPTIMIZED.h"
-#include "levenshtein.h"
+#include "EditD.h"
 
 int main(int argc, char *argv[])
 {
@@ -82,7 +81,8 @@ int main(int argc, char *argv[])
             begin_time = std::chrono::high_resolution_clock::now();
             // Function to test goes here
 
-            int distance = levenshteinDist(s, t);  //cambiar por levenshteinDistOP o
+            int distance = editDistanceDP(s, t);  
+            //editDistanceRecursive, editDistanceMemo, editDistanceDP, editDistanceDPOptimized
             end_time = std::chrono::high_resolution_clock::now();
 
             elapsed_time = end_time - begin_time;
