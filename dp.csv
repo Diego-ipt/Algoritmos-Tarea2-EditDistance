@@ -1,0 +1,13 @@
+pair,t_mean,t_stdev,t_Q0,t_Q1,t_Q2,t_Q3,t_Q4
+archivo1.txt-archivo2.txt,770.242,830.36,404,467.75,608,756.25,7218
+archivo1.txt-archivo3.txt,541.742,164.834,411,447,488,611.25,2438
+archivo1.txt-archivo4.txt,590.527,223.32,421,470.75,582.5,663,3412
+archivo2.txt-archivo1.txt,553.543,139.791,407,438,495,649.25,1334
+archivo2.txt-archivo3.txt,606.395,403.16,426,486,575,662,6807
+archivo2.txt-archivo4.txt,600.805,388.645,440,460,534,681,6447
+archivo3.txt-archivo1.txt,566.703,189.338,410,460,547,661,3090
+archivo3.txt-archivo2.txt,586.762,113.965,433,460,613.5,668,984
+archivo3.txt-archivo4.txt,573.074,218.522,416,462,538,652.5,3519
+archivo4.txt-archivo1.txt,556.02,222.596,416,455.75,490,627.5,3541
+archivo4.txt-archivo2.txt,594.352,300.632,436,469,581.5,664.5,5033
+archivo4.txt-archivo3.txt,620.684,282.132,426,484.5,623.5,687.25,4466

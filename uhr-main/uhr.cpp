@@ -20,9 +20,20 @@
 #include <vector>
 
 #include "utils.cpp"
+#include <sstream>
+
 
  // Include to be tested files here
 #include "EditD.h"
+
+
+// Lee un archivo de texto completo a un string (mantiene saltos de línea)
+std::string leerArchivoComoCadena(const std::string& ruta) {
+    std::ifstream archivo(ruta);
+    std::ostringstream contenido;
+    contenido << archivo.rdbuf(); // lee todo, incluyendo \n y espacios
+    return contenido.str();
+}
 
 int main(int argc, char *argv[])
 {
@@ -49,64 +60,65 @@ int main(int argc, char *argv[])
     // File to write time data
     std::ofstream time_data;
     time_data.open(argv[1]);
-    time_data << "n,t_mean,t_stdev,t_Q0,t_Q1,t_Q2,t_Q3,t_Q4" << std::endl;
 
     // Begin testing
     std::cerr << "\033[0;36mRunning tests...\033[0m" << std::endl << std::endl;
     executed_runs = 0;
-    for (n = lower; n <= upper; n += step) {
-        mean_time = 0;
-        time_stdev = 0;
 
-        // Test configuration goes here
-        ifstream archivo1("prueba1.txt");
-        ifstream archivo2("prueba2.txt"); //funciona con levenshtein ya que necesita recibir 2 archivos
-
-        if (!archivo1.is_open() || !archivo2.is_open()) {
-            cerr << "No se pudo abrir uno o ambos archivos." << endl;
-            return 1;
-        }
-
-        std::string s, t;
-        std::getline(archivo1, s); // lee primera línea del archivo1
-        std::getline(archivo2, t); // lee primera línea del archivo2
-        archivo1.close();
-        archivo2.close();
-
-        // Run to compute elapsed time
-        for (i = 0; i < runs; i++) {
-            // Remember to change total depending on step type
-            display_progress(++executed_runs, total_runs_additive);
-
-            begin_time = std::chrono::high_resolution_clock::now();
-            // Function to test goes here
-
-            int distance = editDistanceDP(s, t);  
-            //editDistanceRecursive, editDistanceMemo, editDistanceDP, editDistanceDPOptimized
-            end_time = std::chrono::high_resolution_clock::now();
-
-            elapsed_time = end_time - begin_time;
-            times[i] = elapsed_time.count();
-
-            mean_time += times[i];
-        }
-
-        // Compute statistics
-        mean_time /= runs;
-
-        for (i = 0; i < runs; i++) {
-            dev = times[i] - mean_time;
-            time_stdev += dev * dev;
-        }
-
-        time_stdev /= runs - 1; // Subtract 1 to get unbiased estimator
-        time_stdev = std::sqrt(time_stdev);
-
-        quartiles(times, q);
-
-        time_data << n << "," << mean_time << "," << time_stdev << ",";
-        time_data << q[0] << "," << q[1] << "," << q[2] << "," << q[3] << "," << q[4] << std::endl;
+    std::vector<std::string> rutas = {
+        "archivo1.txt", "archivo2.txt", "archivo3.txt", "archivo4.txt"
+    };
+    std::vector<std::string> cadenas;
+    for (const auto& ruta : rutas) {
+        cadenas.push_back(leerArchivoComoCadena(ruta));
     }
+    int N = cadenas.size();
+
+    time_data << "pair,t_mean,t_stdev,t_Q0,t_Q1,t_Q2,t_Q3,t_Q4" << std::endl;
+
+    executed_runs = 0;
+
+    for (int i = 0; i < N; ++i) {
+        for (int j = 0; j < N; ++j) {
+            if (i == j) continue;
+
+            std::string label = rutas[i] + "-" + rutas[j];
+
+            mean_time = 0;
+            time_stdev = 0;
+
+            for (int k = 0; k < runs; ++k) {
+                display_progress(++executed_runs, runs * 12);
+
+                begin_time = std::chrono::high_resolution_clock::now();
+                int distance = editDistanceDPOptimized(cadenas[i], cadenas[j]);
+                //editDistanceRecursive, editDistanceMemo, editDistanceDP, editDistanceDPOptimized
+
+                end_time = std::chrono::high_resolution_clock::now();
+
+                elapsed_time = end_time - begin_time;
+                times[k] = elapsed_time.count();
+
+                mean_time += times[k];
+            }
+
+            mean_time /= runs;
+
+            for (int k = 0; k < runs; ++k) {
+                dev = times[k] - mean_time;
+                time_stdev += dev * dev;
+            }
+
+            time_stdev /= runs - 1;
+            time_stdev = std::sqrt(time_stdev);
+
+            quartiles(times, q);
+
+            time_data << label << "," << mean_time << "," << time_stdev << ",";
+            time_data << q[0] << "," << q[1] << "," << q[2] << "," << q[3] << "," << q[4] << std::endl;
+        }
+    }
+
 
     // This is to keep loading bar after testing
     std::cerr << std::endl << std::endl;
