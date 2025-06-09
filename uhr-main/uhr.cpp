@@ -22,7 +22,6 @@
 #include "utils.cpp"
 #include <sstream>
 
-
  // Include to be tested files here
 #include "EditD.h"
 
@@ -30,8 +29,12 @@
 // Lee un archivo de texto completo a un string (mantiene saltos de línea)
 std::string leerArchivoComoCadena(const std::string& ruta) {
     std::ifstream archivo(ruta);
+    if (!archivo.is_open()) {
+        std::cerr << "Error abriendo archivo: " << ruta << std::endl;
+        return "";
+    }
     std::ostringstream contenido;
-    contenido << archivo.rdbuf(); // lee todo, incluyendo \n y espacios
+    contenido << archivo.rdbuf();
     return contenido.str();
 }
 
@@ -50,7 +53,7 @@ int main(int argc, char *argv[])
     double mean_time, time_stdev, dev;
     auto begin_time = std::chrono::high_resolution_clock::now();
     auto end_time = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double, std::nano> elapsed_time = end_time - begin_time;
+    std::chrono::duration<double, std::milli> elapsed_time = end_time - begin_time;
 
     // Set up random number generation
     std::random_device rd;
@@ -60,65 +63,68 @@ int main(int argc, char *argv[])
     // File to write time data
     std::ofstream time_data;
     time_data.open(argv[1]);
+    time_data << "n,t_mean,t_stdev,t_Q0,t_Q1,t_Q2,t_Q3,t_Q4" << std::endl;
 
     // Begin testing
     std::cerr << "\033[0;36mRunning tests...\033[0m" << std::endl << std::endl;
     executed_runs = 0;
+    for (n = lower; n <= upper; n += step) {
+        mean_time = 0;
+        time_stdev = 0;
+        std::vector<std::string> rutas = {
+            "texto1.txt", "texto2.txt", "texto3.txt", "texto4.txt"
+        };
 
-    std::vector<std::string> rutas = {
-        "archivo1.txt", "archivo2.txt", "archivo3.txt", "archivo4.txt"
-    };
-    std::vector<std::string> cadenas;
-    for (const auto& ruta : rutas) {
-        cadenas.push_back(leerArchivoComoCadena(ruta));
-    }
-    int N = cadenas.size();
-
-    time_data << "pair,t_mean,t_stdev,t_Q0,t_Q1,t_Q2,t_Q3,t_Q4" << std::endl;
-
-    executed_runs = 0;
-
-    for (int i = 0; i < N; ++i) {
-        for (int j = 0; j < N; ++j) {
-            if (i == j) continue;
-
-            std::string label = rutas[i] + "-" + rutas[j];
-
-            mean_time = 0;
-            time_stdev = 0;
-
-            for (int k = 0; k < runs; ++k) {
-                display_progress(++executed_runs, runs * 12);
-
-                begin_time = std::chrono::high_resolution_clock::now();
-                int distance = editDistanceDPOptimized(cadenas[i], cadenas[j]);
-                //editDistanceRecursive, editDistanceMemo, editDistanceDP, editDistanceDPOptimized
-
-                end_time = std::chrono::high_resolution_clock::now();
-
-                elapsed_time = end_time - begin_time;
-                times[k] = elapsed_time.count();
-
-                mean_time += times[k];
+        std::vector<std::string> cadenas;
+        for (const auto& ruta : rutas) {
+            std::string contenido = leerArchivoComoCadena(ruta);
+            if (contenido.size() > n) {
+                contenido = contenido.substr(0, n);
             }
-
-            mean_time /= runs;
-
-            for (int k = 0; k < runs; ++k) {
-                dev = times[k] - mean_time;
-                time_stdev += dev * dev;
-            }
-
-            time_stdev /= runs - 1;
-            time_stdev = std::sqrt(time_stdev);
-
-            quartiles(times, q);
-
-            time_data << label << "," << mean_time << "," << time_stdev << ",";
-            time_data << q[0] << "," << q[1] << "," << q[2] << "," << q[3] << "," << q[4] << std::endl;
+            cadenas.push_back(contenido);
         }
-    }
 
+//   g++ -std=c++11 -O0 -I. -o uhr uhr-main/uhr.cpp
+//   /usr/bin/time -f "%M" ./uhr recursivo.csv 64 10 100 5
+
+        // Run to compute elapsed time
+        for (i = 0; i < runs; i++) {
+            // Remember to change total depending on step type
+            display_progress(++executed_runs, total_runs_additive);
+
+            begin_time = std::chrono::high_resolution_clock::now();
+            for (int a = 0; a < 4; ++a) {
+                for (int b = 0; b < 4; ++b) {
+                    if(a != b) {
+                        int distance = editDistanceRecursive(cadenas[a], cadenas[b]);
+                    }
+                }
+            }
+            //editDistanceRecursive, editDistanceMemo, editDistanceDP, editDistanceDPOptimized
+            end_time = std::chrono::high_resolution_clock::now();
+
+            elapsed_time = end_time - begin_time;
+            times[i] = elapsed_time.count();
+
+            mean_time += times[i];
+        }
+
+        // Compute statistics
+        mean_time /= runs;
+
+        for (i = 0; i < runs; i++) {
+            dev = times[i] - mean_time;
+            time_stdev += dev * dev;
+        }
+
+        time_stdev /= runs - 1; // Subtract 1 to get unbiased estimator
+        time_stdev = std::sqrt(time_stdev);
+
+        quartiles(times, q);
+
+        time_data << n << "," << mean_time << "," << time_stdev << ",";
+        time_data << q[0] << "," << q[1] << "," << q[2] << "," << q[3] << "," << q[4] << std::endl;
+    }
 
     // This is to keep loading bar after testing
     std::cerr << std::endl << std::endl;
