@@ -22,8 +22,8 @@
 #include "utils.cpp"
 #include <sstream>
 
- // Include to be tested files here
-#include "EditD.h"
+// Cambia la ruta del include para EditD.h al directorio padre
+#include "../EditD.h"
 
 
 // Lee un archivo de texto completo a un string (mantiene saltos de línea)
