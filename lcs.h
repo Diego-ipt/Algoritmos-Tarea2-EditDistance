@@ -32,4 +32,4 @@ inline int lcs_memo_str(const string &s, const string &t) {
     return lcs_memo_helper(s, t, s.size(), t.size(), memo);
 }
 
-#endif // LCS_H
+#endif // LCS_H 
