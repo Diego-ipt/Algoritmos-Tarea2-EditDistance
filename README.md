@@ -36,9 +36,9 @@ Abre una terminal en la carpeta del proyecto y ejecuta:
 
 ```
 
-g++ -std=c++11 -O2 -Wall -I. -o test test.cpp
+g++ -std=c++11 -o test test.cpp 
 
-g++ -std=c++11 -O2 -Wall -I. -o uhr uhr-main/uhr.cpp
+g++ -std=c++11 -o uhr uhr-main/uhr.cpp
 
 ```
 
@@ -101,47 +101,3 @@ make clean
 ```
 
 o simplemente borra los archivos `test.exe`, `uhr.exe` y los `.csv` manualmente.
-
-## ¿Cómo instalar `make` en Windows?
-
-Si deseas usar el comando `make` en Windows, puedes instalarlo de las siguientes formas:
-
-### Opción 1: Instalar MinGW con MSYS
-
-1. Descarga e instala [MinGW](https://www.mingw-w64.org/).
-2. Durante la instalación, selecciona la opción para instalar MSYS.
-3. Abre la terminal MSYS (no la CMD de Windows).
-4. Escribe `make --version` para verificar que está instalado.
-
-### Opción 2: Instalar Make con Chocolatey
-
-1. Instala [Chocolatey](https://chocolatey.org/install) si no lo tienes.
-2. Abre una terminal como administrador y ejecuta:
-
-   ```
-
-   choco install make
-
-   ```
-3. Cierra y abre la terminal, luego verifica con:
-
-   ```
-
-   make --version
-
-   ```
-
-### Opción 3: Usar WSL (Subsistema de Windows para Linux)
-
-1. Instala WSL siguiendo la [guía oficial](https://learn.microsoft.com/es-es/windows/wsl/install).
-2. Abre una terminal de Ubuntu o tu distribución preferida.
-3. Ejecuta:
-
-   ```
-
-   sudo apt update
-
-   sudo apt install make
-
-   ```
-4. Usa `make` normalmente en la terminal WSL.
