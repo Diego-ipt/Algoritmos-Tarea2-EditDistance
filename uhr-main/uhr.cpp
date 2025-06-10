@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
         }
 
 //   g++ -std=c++11 -O0 -I. -o uhr uhr-main/uhr.cpp
-//   /usr/bin/time -f "%M" ./uhr recursivo.csv 64 10 100 5
+//   /usr/bin/time -f "%M" ./uhr dp.csv 64 10 100 5 
 
         // Run to compute elapsed time
         for (i = 0; i < runs; i++) {
@@ -96,7 +96,7 @@ int main(int argc, char *argv[])
             for (int a = 0; a < 4; ++a) {
                 for (int b = 0; b < 4; ++b) {
                     if(a != b) {
-                        int distance = editDistanceRecursive(cadenas[a], cadenas[b]);
+                        int distance = editDistanceMemo(cadenas[a], cadenas[b]);
                     }
                 }
             }
